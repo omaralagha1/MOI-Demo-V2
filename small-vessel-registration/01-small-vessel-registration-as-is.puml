@@ -1,0 +1,100 @@
+@startuml SMV_A4_1_1_AS_IS
+' SOURCE: Arabic procedure A.4.1/1 and its flowchart (nine manual steps).
+' This is NOT the proposed software workflow.
+' ASIS-01..09 preserve the original flowchart steps.
+
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam ArrowColor #334155
+skinparam ActivityBorderColor #334155
+skinparam ActivityBackgroundColor #FFFFFF
+skinparam ActivityDiamondBackgroundColor #FFF7ED
+skinparam SwimlaneTitleFontStyle bold
+
+title A.4.1/1 - Small Vessel Registration (under 150 tons)\nAS-IS / Current Manual Procedure
+
+|#E0F2FE|Applicant / Authorized Representative|
+start
+:Request registration of a vessel\nunder 150 tons [BR-001];
+if (Applicant visits ministry first?) then (Yes)
+  |#DCFCE7|Registration Officer|
+  :Receive paper documents from owner\nor authorized representative [ASIS-01];
+  :Review supporting documents [ASIS-02];
+  while (Required documents incomplete?) is (Yes)
+    :Suspend the transaction until\nmissing documents are supplied [BR-008];
+    |Applicant / Authorized Representative|
+    :Bring missing documents;
+    |Registration Officer|
+    :Review completed file [ASIS-02];
+  endwhile (No)
+  :Issue Small Vessel Inspection Form [ASIS-03];
+  :Collect prescribed service fee,\nsurveyors' wages, and any violations [ASIS-04];
+  |Applicant / Authorized Representative|
+  :Take the documents for inspection\nat an external inspection center [ASIS-05];
+else (No - direct center visit)
+  |Applicant / Authorized Representative|
+  :Go directly with required documents\nto an external inspection center [BR-005];
+  |#FEF3C7|External Inspection Center / Flag State Control|
+  :Receive documents and collect fees\nat the center [BR-005];
+  note right
+    Source note permits direct attendance
+    with required documents and collection
+    of fees at the external center.
+    It does not specify an online booking.
+  end note
+endif
+
+|External Inspection Center / Flag State Control|
+:Inspect vessel and prepare inspection\nresults / completed inspection form [ASIS-05];
+|Applicant / Authorized Representative|
+:Return documents after inspection\nto the responsible officer [ASIS-06];
+|Registration Officer|
+:Review returned inspection paperwork;
+:Prepare registration certificate [ASIS-07];
+:Sign registration certificate [ASIS-07];
+|#F3E8FF|Successive Responsible Officials|
+:Apply subsequent signatures [ASIS-07];
+|#FCE7F3|Ship Registrar|
+:Sign registration certificate [ASIS-07];
+|Registration Officer|
+:Receive returned signed certificate [ASIS-08];
+:Deliver certificate to applicant\nand retain one copy [ASIS-09];
+|Applicant / Authorized Representative|
+:Receive registration certificate;
+stop
+
+legend right
+  **Confirmed source rules**
+  [BR-001] Vessel is below 150 tons.
+  [BR-002] Required documentation depends on the case:
+             evidence of ownership; foreign-flag deletion
+             certificate where applicable; purchase invoice;
+             origin certificate; customs declaration;
+             valid owner Civil ID; for companies, authorized
+             signature and commercial registration;
+             official POA for representation; MOC clearance.
+  [BR-003] Service-fee table shows 16 fixed units.
+             Surveyor wages and violations may also apply.
+             Currency is NOT confirmed in supplied images.
+  [BR-004] Published processing time: 2-3 working days.
+  [BR-005] External-center-first alternative is allowed;
+             that center collects fees in this route.
+  [BR-006] Signatures: officer -> successive officials
+             -> ship registrar.
+  [BR-007] A copy of the certificate is retained.
+  [BR-008] Missing documents suspend the procedure.
+  [BR-009] Insurance document wording indicates validity
+             after registration procedures; confirm timing.
+  [BR-010] Official POA required when acting by proxy.
+  [BR-011] Applicant returns inspected documents to officer.
+  **Source metadata**
+  Service frequency: daily.
+  Service place: Kuwait Ports Authority building,
+    Shuwaikh Industrial Area, first floor, office 105.
+  The Coast Guard is named as an external participant,
+    but no automatic Coast Guard transfer is shown.
+endlegend
+
+footer Source-based process model; confirm local terminology with service owner.
+@enduml

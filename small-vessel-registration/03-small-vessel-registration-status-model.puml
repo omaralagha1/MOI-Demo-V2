@@ -1,0 +1,75 @@
+@startuml SMV_A4_1_1_STATUS
+' Proposed implementation state machine. All transitions require
+' authorization and an immutable audit event. State IDs are stable API values.
+' Center-first intake can include validated payment and inspection evidence.
+
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam state {
+  BackgroundColor #F8FAFC
+  BorderColor #475569
+  FontColor #0F172A
+}
+
+title A.4.1/1 - Proposed Case Lifecycle / State Machine
+
+[*] --> DRAFT : createCase
+DRAFT --> SUBMITTED : submitOnline / importCenterCase
+SUBMITTED --> INITIAL_REVIEW : intakeAccepted
+INITIAL_REVIEW --> NEEDS_INFORMATION : requestMissingEvidence
+NEEDS_INFORMATION --> INITIAL_REVIEW : resubmitEvidence
+INITIAL_REVIEW --> AWAITING_PAYMENT : officeRouteValidated
+AWAITING_PAYMENT --> AWAITING_INSPECTION : paymentVerified
+INITIAL_REVIEW --> AWAITING_INSPECTION : centerFeeReceiptVerified
+INITIAL_REVIEW --> FINAL_REVIEW : centerFileAndReportVerified
+
+AWAITING_INSPECTION --> INSPECTION_IN_PROGRESS : inspectionBegins
+INSPECTION_IN_PROGRESS --> REINSPECTION_REQUIRED : failedInspection [PROP-04]
+REINSPECTION_REQUIRED --> INSPECTION_IN_PROGRESS : inspectionRebooked [PROP-04]
+INSPECTION_IN_PROGRESS --> AWAITING_INSPECTION_REPORT : passedInspection
+AWAITING_INSPECTION_REPORT --> FINAL_REVIEW : validatedInspectionReportReceived
+
+FINAL_REVIEW --> NEEDS_INFORMATION : requestPostInspectionCorrections [PROP-06]
+FINAL_REVIEW --> CERTIFICATE_DRAFT : finalFileApproved
+CERTIFICATE_DRAFT --> OFFICER_SIGNATURE : draftGenerated
+OFFICER_SIGNATURE --> SUPERVISOR_SIGNATURE : officerSigned
+SUPERVISOR_SIGNATURE --> SUPERVISOR_SIGNATURE : nextSupervisorSigned [if more officials]
+SUPERVISOR_SIGNATURE --> REGISTRAR_SIGNATURE : allRequiredOfficialsSigned
+REGISTRAR_SIGNATURE --> READY_FOR_RELEASE : registrarSigned
+OFFICER_SIGNATURE --> CERTIFICATE_DRAFT : returnedForCorrection [PROP-07]
+SUPERVISOR_SIGNATURE --> CERTIFICATE_DRAFT : returnedForCorrection [PROP-07]
+REGISTRAR_SIGNATURE --> CERTIFICATE_DRAFT : returnedForCorrection [PROP-07]
+READY_FOR_RELEASE --> COMPLETED : officerReleasedCertificate
+COMPLETED --> [*]
+
+DRAFT --> WITHDRAWN : applicantWithdraws [PROP-10]
+SUBMITTED --> WITHDRAWN : authorizedWithdrawal [PROP-10]
+NEEDS_INFORMATION --> WITHDRAWN : authorizedWithdrawal [PROP-10]
+WITHDRAWN --> [*]
+
+note right of INITIAL_REVIEW
+  For center-first route, never skip fee
+  verification. If the source center has
+  already performed inspection, require a
+  verified report before FINAL_REVIEW.
+end note
+
+note bottom of COMPLETED
+  After completion, insurance follow-up may
+  continue in a separate compliance process
+  only if BR-009 policy is confirmed.
+  Coast Guard sync is not assumed.
+end note
+
+legend right
+  All status changes require RBAC + audit trail.
+  Payment confirmations must be idempotent.
+  Signature order must be enforced server-side.
+  Returned approval must invalidate downstream
+    draft signatures as legally required (TBD).
+  Applicant withdrawal is proposed, not sourced.
+  SLA: published 2-3 working days; exclude only
+    pauses confirmed by ministry policy.
+endlegend
+@enduml

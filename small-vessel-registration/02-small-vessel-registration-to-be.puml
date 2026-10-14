@@ -1,0 +1,196 @@
+@startuml SMV_A4_1_1_TO_BE
+' Proposed digitization of service A.4.1/1.
+' IMPORTANT: [ASIS-NN] is source mapping; [SYS-NN] denotes
+' system functionality; [PROP-NN] requires ministry/client approval.
+' The source does NOT establish e-payment, authentication provider,
+' digital signatures, center API integration, or Coast Guard API.
+
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam ArrowColor #334155
+skinparam ActivityBorderColor #334155
+skinparam ActivityBackgroundColor #FFFFFF
+skinparam ActivityDiamondBackgroundColor #FFF7ED
+skinparam SwimlaneTitleFontStyle bold
+skinparam NoteBackgroundColor #FFFBEB
+skinparam NoteBorderColor #D97706
+
+title A.4.1/1 - Small Vessel Registration (under 150 tons)\nTO-BE / Proposed Digitized Service
+
+|#E0F2FE|Applicant / Authorized Representative|
+start
+:Authenticate by configured identity mechanism\n[PROP-01];
+:Create a new registration request [SYS-01];
+|#EDE9FE|E-Service Portal|
+:Create case ID and audit entry [SYS-02];
+if (Intake channel?) then (Online ministry route)
+  |Applicant / Authorized Representative|
+  :Enter vessel, owner, and representation details;\nupload conditional supporting documents\n[ASIS-01 / SYS-03];
+  |E-Service Portal|
+  :Validate required fields, document presence,\nfile type/size, and tonnage < 150 [SYS-04];
+  while (Submission complete?) is (No)
+    :Mark NEEDS_INFORMATION;\nshow missing documents [BR-008 / SYS-05];
+    |Applicant / Authorized Representative|
+    :Supply / correct requested evidence;
+    |E-Service Portal|
+    :Revalidate submitted evidence [SYS-04];
+  endwhile (Yes)
+  |#DCFCE7|Registration Officer|
+  :Review owner, vessel, and supporting file\n[ASIS-01 / ASIS-02];
+  while (Officer accepts documentation?) is (No)
+    :Request corrections with reason\n[BR-008 / SYS-06];
+    |Applicant / Authorized Representative|
+    :Provide corrected documents;
+    |Registration Officer|
+    :Verify corrected documents [ASIS-02];
+  endwhile (Yes)
+  :Approve initial file and issue\ninspection form [ASIS-03 / SYS-07];
+  |E-Service Portal|
+  :Assess prescribed fixed fee (16 units),\nsurveyor wages, and applicable violations\n[BR-003 / SYS-08];
+  note right
+    Currency, wage calculation and violation
+    retrieval are configuration/integration
+    decisions. Never hard-code unconfirmed
+    payment amounts beyond the 16 source value.
+  end note
+  |Applicant / Authorized Representative|
+  :Make electronic payment [PROP-02];
+  |E-Service Portal|
+  while (Payment confirmed?) is (No)
+    :Remain AWAITING_PAYMENT;\nrecord failure or pending confirmation [SYS-09];
+    |Applicant / Authorized Representative|
+    :Retry / resolve payment;
+    |E-Service Portal|
+    :Verify receipt with payment provider [SYS-09];
+  endwhile (Yes)
+  :Issue unique receipt and inspection referral\n[PROP-02 / SYS-10];
+  |Applicant / Authorized Representative|
+  :Arrange and attend inspection\nwith referral and supporting file\n[ASIS-05];
+else (External center first)
+  |Applicant / Authorized Representative|
+  :Attend permitted external center\nwith required documents [BR-005];
+  |#FEF3C7|External Inspection Center|
+  :Check necessary center-intake documents\nand collect applicable fees [BR-005];
+  :Register or package center intake\nand fee receipt for ministry case [PROP-03];
+  |E-Service Portal|
+  :Link/create a unique case and payment record;\nflag fee as center-paid, pending verification\n[SYS-11];
+  note right
+    The original alternative goes directly to
+    the external inspection center: ministry
+    officer approval BEFORE inspection is not
+    required by the supplied manual process.
+    The officer validates the final file later.
+  end note
+endif
+
+|External Inspection Center|
+:Inspect vessel and record inspection outcome\n[ASIS-05 / SYS-12];
+while (Vessel passed inspection?) is (No)
+  :Record findings and reinspection need\n[PROP-04];
+  |Applicant / Authorized Representative|
+  :Rectify findings and arrange reinspection\n[PROP-04];
+  |External Inspection Center|
+  :Repeat inspection [PROP-04];
+endwhile (Yes)
+:Finalize signed inspection report [SYS-12];
+if (Approved inspection-center integration?) then (Yes)
+  :Submit authenticated inspection report\nelectronically [PROP-05];
+  |E-Service Portal|
+  :Attach inspection report to case [SYS-13];
+else (No - manual fallback)
+  |Applicant / Authorized Representative|
+  :Return inspected documents to officer\n[ASIS-06 / BR-011];
+  |Registration Officer|
+  :Verify originals / received inspection result\nand add documents to case [SYS-13];
+endif
+
+|Registration Officer|
+:Review inspection outcome, identity, ownership,\ncompleted file and fee evidence [SYS-14];
+while (Final file is acceptable?) is (No)
+  :Request corrections, with recorded reason\n[PROP-06];
+  |Applicant / Authorized Representative|
+  :Complete requested corrections;
+  |Registration Officer|
+  :Recheck updated file [SYS-14];
+endwhile (Yes)
+
+repeat
+  |E-Service Portal|
+  :Generate or revise draft registration certificate\nand proposed registration number [SYS-15];
+  note right
+    Registry numbering authority, reservation,
+    uniqueness, and issuance timing need approval.
+    Draft must not count as issued certificate.
+  end note
+  |Registration Officer|
+  if (Officer accepts draft?) then (Yes)
+    :Sign certificate draft [ASIS-07 / PROP-07];
+    |#F3E8FF|Successive Responsible Officials|
+    if (All successive officials approve?) then (Yes)
+      :Sign in configured order [ASIS-07 / PROP-07];
+      |#FCE7F3|Ship Registrar|
+      if (Registrar approves?) then (Yes)
+        :Apply final signature [ASIS-07 / PROP-07];
+        |E-Service Portal|
+        :Mark signatures complete [SYS-16];
+      else (No)
+        :Record registrar comments [PROP-07];
+      endif
+    else (No)
+      :Record responsible official comments [PROP-07];
+    endif
+  else (No)
+    :Record officer comments [PROP-07];
+  endif
+backward:Revise certificate / file and restart\nrequired signatures [PROP-07];
+repeat while (All required signatures obtained?) is (No) not (Yes)
+
+|E-Service Portal|
+:Mark signed certificate ready for release;\nstore verification details [SYS-16];
+|Registration Officer|
+:Receive approved certificate\n[ASIS-08];
+:Release certificate to applicant\n[ASIS-09 / SYS-17];
+|E-Service Portal|
+fork
+  :Archive full case, approvals, fee receipts,\ncertificate and retained copy\n[ASIS-09 / BR-007 / SYS-18];
+fork again
+  :Notify applicant by configured channel\n[PROP-08];
+fork again
+  :Open post-registration insurance follow-up\nif policy confirms applicable timing\n[BR-009 / PROP-09];
+end fork
+|Applicant / Authorized Representative|
+:Download or collect certificate\n[ASIS-09 / SYS-17];
+stop
+
+legend right
+  **Source-grounded controls**
+  BR-001: Only vessels below 150 tons.
+  BR-002: Conditional documentation by ownership,
+     foreign flag, applicant category and representation.
+  BR-003: Fixed amount 16 (currency TBD), plus surveyor
+     wages and violations where applicable.
+  BR-004: Published 2-3 business days (no confirmed
+     exclusion for inspection waiting time).
+  BR-005: Direct external center and center fee collection.
+  BR-006: Officer -> responsible officials -> ship registrar.
+  BR-007: Preserve one copy of issued certificate.
+  BR-008: Incomplete file is suspended until completed.
+  BR-009: Insurance-after-registration wording; confirm timing.
+  BR-010: Official power of attorney for a proxy.
+  BR-011: Original post-inspection paperwork return.
+  **Approval required before production**
+  PROP-01: Identity provider and user onboarding.
+  PROP-02: Payment gateway, currency, refunds, reconciliation.
+  PROP-03: Center case intake and center receipt verification.
+  PROP-04: Reinspection workflow / rejection policy.
+  PROP-05: Center electronic signing and API integration.
+  PROP-06: Post-inspection correction handling.
+  PROP-07: Digital signature validity and rejection behavior.
+  PROP-08: Notification methods and message templates.
+  PROP-09: Insurance timing and post-registration enforcement.
+  Coast Guard data sharing: separate approval; NOT automatic.
+endlegend
+
+footer Proposed TO-BE workflow. Validate all PROP decisions with service owner.
+@enduml

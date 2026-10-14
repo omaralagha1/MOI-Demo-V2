@@ -1,0 +1,206 @@
+/*
+ * Kuwait Maritime Services design tokens.
+ * Palette values are the proposed platform tokens; no approved brand guideline exists in this repository yet.
+ * Components use the semantic tokens (--surface, --text, --primary...) so themes such as high contrast can override them.
+ * Breakpoints (media queries cannot read custom properties): sm 480px, md 768px, lg 1024px, xl 1280px, 2xl 1536px.
+ */
+@theme static {
+  --color-navy-950: #071528;
+  --color-navy-900: #0b1f3a;
+  --color-navy-800: #102b4e;
+  --color-navy-700: #163a63;
+  --color-blue-700: #174a78;
+  --color-blue-600: #1d5a8f;
+  --color-blue-100: #dbe8f5;
+  --color-blue-50: #eef4fa;
+  --color-teal-800: #05545d;
+  --color-teal-700: #066a75;
+  --color-teal-600: #087f8c;
+  --color-teal-500: #0e97a5;
+  --color-teal-300: #6cc9d1;
+  --color-teal-100: #d3eef0;
+  --color-teal-50: #ebf7f8;
+  --color-green-700: #087d45;
+  --color-green-600: #0a8f50;
+  --color-green-100: #d5efe1;
+  --color-green-50: #ebf7f0;
+  --color-red-700: #a92f39;
+  --color-red-600: #c53b45;
+  --color-red-100: #f8dadd;
+  --color-red-50: #fdeef0;
+  --color-amber-800: #7a4f00;
+  --color-amber-600: #b77a07;
+  --color-amber-100: #fbe9bf;
+  --color-amber-50: #fff7e3;
+  --color-violet-700: #5a3fa0;
+  --color-violet-50: #f2eefb;
+  --color-gray-950: #0f1d2e;
+  --color-gray-900: #172b44;
+  --color-gray-700: #3b4f66;
+  --color-gray-600: #4a5e75;
+  --color-gray-500: #5b6e84;
+  --color-gray-400: #8797a9;
+  --color-gray-300: #c5d2df;
+  --color-gray-200: #dee6ee;
+  --color-gray-100: #edf2f7;
+  --color-gray-50: #f5f8fc;
+  --color-white: #ffffff;
+  --color-flag-green: #007a3d;
+  --color-flag-red: #ce1126;
+  --color-flag-black: #000000;
+
+  --font-sans: 'Inter', 'IBM Plex Sans Arabic', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-arabic: 'IBM Plex Sans Arabic', 'Inter', system-ui, 'Segoe UI', Tahoma, sans-serif;
+  --font-mono: ui-monospace, 'Cascadia Mono', 'Segoe UI Mono', Consolas, monospace;
+
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+  --radius-pill: 999px;
+
+  --shadow-xs: 0 1px 2px rgb(16 43 78 / 0.06);
+  --shadow-sm: 0 1px 3px rgb(16 43 78 / 0.08), 0 1px 2px rgb(16 43 78 / 0.04);
+  --shadow-md: 0 6px 16px -4px rgb(16 43 78 / 0.1), 0 2px 6px -2px rgb(16 43 78 / 0.06);
+  --shadow-lg: 0 18px 40px -12px rgb(16 43 78 / 0.18), 0 4px 12px -4px rgb(16 43 78 / 0.08);
+  --shadow-xl: 0 32px 64px -20px rgb(7 21 40 / 0.35);
+}
+
+:root {
+  /* Semantic colours */
+  --canvas: var(--color-gray-50);
+  --surface: var(--color-white);
+  --surface-raised: var(--color-white);
+  --surface-sunken: var(--color-gray-100);
+  --surface-tint: var(--color-blue-50);
+  --border: var(--color-gray-200);
+  --border-strong: var(--color-gray-300);
+  --text: var(--color-gray-900);
+  --text-muted: var(--color-gray-600);
+  --text-subtle: var(--color-gray-500);
+  --text-inverse: var(--color-white);
+  --heading: var(--color-navy-800);
+  --primary: var(--color-blue-700);
+  --primary-hover: var(--color-navy-800);
+  --primary-soft: var(--color-blue-50);
+  --accent: var(--color-teal-600);
+  --accent-hover: var(--color-teal-700);
+  --accent-soft: var(--color-teal-50);
+  --link: var(--color-blue-700);
+  --link-hover: var(--color-teal-700);
+  --focus-ring: var(--color-teal-500);
+  --success: var(--color-green-700);
+  --success-soft: var(--color-green-50);
+  --success-border: var(--color-green-100);
+  --warning: var(--color-amber-800);
+  --warning-soft: var(--color-amber-50);
+  --warning-border: var(--color-amber-100);
+  --danger: var(--color-red-700);
+  --danger-solid: var(--color-red-600);
+  --danger-soft: var(--color-red-50);
+  --danger-border: var(--color-red-100);
+  --info: var(--color-blue-700);
+  --info-soft: var(--color-blue-50);
+  --info-border: var(--color-blue-100);
+  --progress: var(--color-teal-700);
+  --progress-soft: var(--color-teal-50);
+  --progress-border: var(--color-teal-100);
+  --approval: var(--color-violet-700);
+  --approval-soft: var(--color-violet-50);
+  --hero-from: var(--color-navy-900);
+  --hero-via: var(--color-blue-700);
+  --hero-to: var(--color-teal-600);
+
+  /* Typography scale (rem follows the accessibility text-size setting) */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-md: 1.0625rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-display: clamp(2rem, 1.2rem + 3.4vw, 3.5rem);
+  --leading-tight: 1.2;
+  --leading-snug: 1.4;
+  --leading-body: 1.6;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* Spacing (4px grid) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --gutter: clamp(1rem, 0.6rem + 1.8vw, 2rem);
+  --container: 1240px;
+  --container-narrow: 880px;
+
+  /* Controls */
+  --control-sm: 2.25rem;
+  --control-md: 2.75rem;
+  --control-lg: 3.25rem;
+  --control-xl: 3.75rem;
+  --focus-width: 3px;
+  --focus-offset: 2px;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+
+  /* Layout */
+  --header-height: 4.5rem;
+  --sidebar-width: 17rem;
+}
+
+/* Accessibility preferences (set by the accessibility menu on <html>) */
+html[data-text-size='large'] { font-size: 112.5%; }
+html[data-text-size='x-large'] { font-size: 125%; }
+
+html[data-contrast='high'] {
+  --canvas: #ffffff;
+  --surface-sunken: #f2f2f2;
+  --surface-tint: #ffffff;
+  --border: #4a4a4a;
+  --border-strong: #1a1a1a;
+  --text: #000000;
+  --text-muted: #1a1a1a;
+  --text-subtle: #262626;
+  --heading: #000000;
+  --primary: #0a2a52;
+  --primary-hover: #000000;
+  --accent: #04434a;
+  --accent-hover: #000000;
+  --link: #0a2a52;
+  --link-hover: #000000;
+  --focus-ring: #d97706;
+  --success: #04502b;
+  --warning: #4d3200;
+  --danger: #7a0f17;
+  --info: #0a2a52;
+  --progress: #04434a;
+  --approval: #3a2470;
+  --hero-from: #000000;
+  --hero-via: #0a2a52;
+  --hero-to: #04434a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --duration-fast: 0ms; --duration-base: 0ms; --duration-slow: 0ms; }
+}
+html[data-motion='reduce'] { --duration-fast: 0ms; --duration-base: 0ms; --duration-slow: 0ms; }

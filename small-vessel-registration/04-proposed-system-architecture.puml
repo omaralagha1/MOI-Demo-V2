@@ -1,0 +1,79 @@
+@startuml SMV_A4_1_1_ARCHITECTURE
+' Illustrative architecture only. Reuse existing project stack.
+' External services are ports/adapters, not approved dependencies.
+
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam componentStyle rectangle
+skinparam ArrowColor #334155
+skinparam PackageBorderColor #94A3B8
+
+title Small Vessel Registration - Proposed Application Boundaries\n(Reference architecture, not procurement decision)
+
+actor "Applicant / Representative" as Applicant
+actor "Registration Officer" as Officer
+actor "Successive Officials" as Supervisors
+actor "Ship Registrar" as Registrar
+actor "External Inspection Center" as Center
+
+package "Digital Channels" {
+  [Applicant Portal\nArabic / English, RTL] as UI
+  [Staff Back Office\nReview and Signature Queues] as Backoffice
+}
+
+package "Application Backend" {
+  [Identity / RBAC] as IAM
+  [Registration Case API] as API
+  [Workflow & State Transition Service] as WF
+  [Document Validation & Storage Adapter] as Docs
+  [Fees and Payment Ledger] as Fees
+  [Inspection Handling Adapter] as Inspection
+  [Certificate Generator and Approval Chain] as Certificate
+  [Audit / Notifications / SLA] as Audit
+}
+
+database "Relational Database\n(Cases, statuses, approvals, fees)" as DB
+cloud "Encrypted Object Storage\n(Documents, reports, certificates)" as Storage
+
+package "Optional integrations - APPROVAL REQUIRED" {
+  [Identity provider] as IdP
+  [Payment provider] as Pay
+  [Inspection center API] as CenterAPI
+  [SMS / Email provider] as Notify
+  [Coast Guard exchange] as CG
+}
+
+Applicant --> UI
+Officer --> Backoffice
+Supervisors --> Backoffice
+Registrar --> Backoffice
+Center --> CenterAPI : If approved / available
+UI --> API
+Backoffice --> API
+API --> IAM
+API --> WF
+WF --> Docs
+WF --> Fees
+WF --> Inspection
+WF --> Certificate
+WF --> Audit
+API --> DB
+WF --> DB
+Docs --> Storage
+Certificate --> Storage
+IAM ..> IdP : optional
+Fees ..> Pay : optional
+Inspection ..> CenterAPI : optional
+Audit ..> Notify : optional
+WF ..> CG : separate approval only
+
+note bottom of WF
+  Enforce server-side business rules and
+  transitions; every transition produces
+  an immutable audit event. Treat AS-IS rules
+  as baseline and proposed digital services
+  as configurable, separately approved options.
+end note
+
+@enduml

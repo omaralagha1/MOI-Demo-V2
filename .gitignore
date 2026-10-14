@@ -1,0 +1,17 @@
+node_modules/
+.next/
+.env
+.env.local
+private_uploads/
+.local-db/
+*.tsbuildinfo
+Agent.md
+docs/
+prisma/
+tests/
+.dockerignore
+docker-compose.override.yml
+docker-compose.yml
+dockerfile
+
+
